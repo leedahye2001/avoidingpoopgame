@@ -3,7 +3,9 @@
 //
 
 #pragma once
-
+#include <vector>
+#include <algorithm>
+using namespace std;
 
 class CavoidingpoopgameView : public CView
 {
@@ -40,6 +42,19 @@ protected:
 // 생성된 메시지 맵 함수
 protected:
 	DECLARE_MESSAGE_MAP()
+public:
+	void falling_poop();
+	vector<CPoint> poop;
+	vector<int> drop;
+	void game_screen();
+	int f;
+	int i;
+	int move;
+	CRect player;
+	afx_msg void OnTimer(UINT_PTR nIDEvent);
+	void delay(DWORD dwMillisecond);
+	afx_msg void OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags);
+	void Player();
 };
 
 #ifndef _DEBUG  // avoidingpoopgameView.cpp의 디버그 버전

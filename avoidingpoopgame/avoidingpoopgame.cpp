@@ -157,6 +157,8 @@ protected:
 // 구현입니다.
 protected:
 	DECLARE_MESSAGE_MAP()
+public:
+//	void game_screen();
 };
 
 CAboutDlg::CAboutDlg() noexcept : CDialogEx(IDD_ABOUTBOX)
@@ -179,6 +181,4 @@ void CavoidingpoopgameApp::OnAppAbout()
 }
 
 // CavoidingpoopgameApp 메시지 처리기
-
-
 

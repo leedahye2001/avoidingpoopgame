@@ -16,7 +16,7 @@
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
-
+#include <windows.h> 
 
 // CavoidingpoopgameView
 
@@ -27,6 +27,9 @@ BEGIN_MESSAGE_MAP(CavoidingpoopgameView, CView)
 	ON_COMMAND(ID_FILE_PRINT, &CView::OnFilePrint)
 	ON_COMMAND(ID_FILE_PRINT_DIRECT, &CView::OnFilePrint)
 	ON_COMMAND(ID_FILE_PRINT_PREVIEW, &CView::OnFilePrintPreview)
+//	ON_WM_CTLCOLOR()
+ON_WM_TIMER()
+ON_WM_KEYDOWN()
 END_MESSAGE_MAP()
 
 // CavoidingpoopgameView 생성/소멸
@@ -34,7 +37,10 @@ END_MESSAGE_MAP()
 CavoidingpoopgameView::CavoidingpoopgameView() noexcept
 {
 	// TODO: 여기에 생성 코드를 추가합니다.
-
+	srand((unsigned)time(NULL));
+	f = 0;
+	i = 0;
+	move = false;
 }
 
 CavoidingpoopgameView::~CavoidingpoopgameView()
@@ -59,6 +65,12 @@ void CavoidingpoopgameView::OnDraw(CDC* /*pDC*/)
 		return;
 
 	// TODO: 여기에 원시 데이터에 대한 그리기 코드를 추가합니다.
+	
+	game_screen();
+	Player();
+	//falling_poop();
+	//SetTimer(0, 500, NULL);
+	
 }
 
 
@@ -80,7 +92,6 @@ void CavoidingpoopgameView::OnEndPrinting(CDC* /*pDC*/, CPrintInfo* /*pInfo*/)
 	// TODO: 인쇄 후 정리 작업을 추가합니다.
 }
 
-
 // CavoidingpoopgameView 진단
 
 #ifdef _DEBUG
@@ -101,5 +112,121 @@ CavoidingpoopgameDoc* CavoidingpoopgameView::GetDocument() const // 디버그되
 }
 #endif //_DEBUG
 
-
 // CavoidingpoopgameView 메시지 처리기
+
+void CavoidingpoopgameView::falling_poop()
+{
+	// TODO: 여기에 구현 코드 추가.
+	CClientDC dc(this);
+	
+	while (i < 10)
+	{
+		CBrush poopc(RGB(255, 255, 255));
+		dc.SelectObject(&poopc);
+		
+		poop.push_back(rand() % 1201 + 110);
+		dc.Ellipse(poop[f].x - 10, (120+poop[f].y) - 10, poop[f].x + 10, (120+poop[f].y) + 10);
+		f++;
+		i++;
+		delay(1000);
+		
+	}
+	
+}
+
+void CavoidingpoopgameView::game_screen()
+{
+	// TODO: 여기에 구현 코드 추가.
+	CClientDC dc(this);
+	CRect rect;
+	GetClientRect(rect);
+	CBrush screen(RGB(0, 0, 0));
+	dc.SelectObject(&screen);
+	dc.Rectangle( rect.left, rect.top , rect.right, rect.bottom);
+
+	CPen pen;
+	pen.CreatePen(PS_SOLID, 5, RGB(255, 255, 255));   
+
+	CPen* Pen2 = dc.SelectObject(&pen);
+	dc.MoveTo(100, 100);
+	dc.LineTo(100, 550);
+
+	dc.MoveTo(100, 550);
+	dc.LineTo(1320, 550);
+
+	dc.MoveTo(1320, 550);
+	dc.LineTo(1320, 100);
+
+	dc.MoveTo(1320, 100);
+	dc.LineTo(100, 100);
+
+	dc.SelectObject(Pen2);				
+}
+
+void CavoidingpoopgameView::OnTimer(UINT_PTR nIDEvent)
+{
+	// TODO: 여기에 메시지 처리기 코드를 추가 및/또는 기본값을 호출합니다.
+	
+	/*for (int i = 0; i < f; i++) {
+		poop[i].y += 10;
+	}
+	
+	Invalidate();	*/
+
+	CView::OnTimer(nIDEvent);
+}
+
+void CavoidingpoopgameView::delay(DWORD dwMillisecond)
+{
+	// TODO: 여기에 구현 코드 추가.
+	MSG msg;
+	DWORD dwStart;
+	dwStart = GetTickCount();
+
+	while (GetTickCount() - dwStart < dwMillisecond)
+	{
+		while (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
+		{
+			TranslateMessage(&msg);
+			DispatchMessage(&msg);
+		}
+	}
+}
+
+
+void CavoidingpoopgameView::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
+{
+	// TODO: 여기에 메시지 처리기 코드를 추가 및/또는 기본값을 호출합니다.
+	/*if (nChar == VK_SPACE) {
+		move = !move;
+		if (move) SetTimer(0, 50, NULL);
+		else KillTimer(0);
+	}*/
+
+	if (nChar == VK_RIGHT) {
+		player.left += 10;
+		player.right += 10;
+		Invalidate();
+	}
+	if (nChar == VK_LEFT) {
+		player.left -= 10;
+		player.right -= 10;
+		Invalidate();
+	}
+	CView::OnKeyDown(nChar, nRepCnt, nFlags);
+}
+
+
+void CavoidingpoopgameView::Player()
+{
+	// TODO: 여기에 구현 코드 추가.
+	CClientDC dc(this);
+
+	CBrush bs(RGB(255, 255, 255));
+	dc.SelectObject(bs);
+	player.right = 735;
+	player.bottom = 540;
+	player.left = 685;
+	player.top = 490;
+	dc.Rectangle(player.left, player.top, player.right, player.bottom);
+}
